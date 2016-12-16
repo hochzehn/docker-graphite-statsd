@@ -46,7 +46,7 @@ RUN apt-get -y update \
        python-pip \
  && apt-get autoremove -y \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
  && cd ${GRAPHITE_WEB_PATH} && python ./setup.py install \
  && cd ${WHISPER_PATH} && python ./setup.py install \
  && cd ${CARBON_PATH} && python ./setup.py install
@@ -81,9 +81,6 @@ ADD conf/etc/service/nginx/run /etc/service/nginx/run
 # default conf setup
 ADD conf /etc/graphite-statsd/conf
 ADD conf/etc/my_init.d/01_conf_init.sh /etc/my_init.d/01_conf_init.sh
-
-# cleanup
-RUN rm -rf /tmp/* /var/tmp/*
 
 # defaults
 EXPOSE 80 2003-2004 2023-2024 8125/udp 8126
