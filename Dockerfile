@@ -30,26 +30,33 @@ RUN pip install django==1.5.12\
  twisted==11.1.0\
  txAMQP==0.6.2
 
+ENV GRAPHITE_WEB_PATH=/usr/local/src/graphite-web
+ENV WHISPER_PATH=/usr/local/src/whisper
+ENV CARBON_PATH=/usr/local/src/carbon
+ENV STATSD_PATH=/opt/statsd
+
+# clone git repositories
+RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/graphite-web.git ${GRAPHITE_WEB_PATH} \
+ && git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/whisper.git ${WHISPER_PATH} \
+ && git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/carbon.git ${CARBON_PATH} \
+ && git clone -b v0.7.2 --depth 1 https://github.com/etsy/statsd.git ${STATSD_PATH}
+
 # install graphite
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
-WORKDIR /usr/local/src/graphite-web
+WORKDIR ${GRAPHITE_WEB_PATH}
 RUN python ./setup.py install
 ADD conf/opt/graphite/conf/*.conf /opt/graphite/conf/
 ADD conf/opt/graphite/webapp/graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 
 # install whisper
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
-WORKDIR /usr/local/src/whisper
+WORKDIR ${WHISPER_PATH}
 RUN python ./setup.py install
 
 # install carbon
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
-WORKDIR /usr/local/src/carbon
+WORKDIR ${CARBON_PATH}
 RUN python ./setup.py install
 
-# install statsd
-RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
-ADD conf/opt/statsd/config.js /opt/statsd/config.js
+# configure statsd
+ADD conf/opt/statsd/config.js ${STATSD_PATH}/config.js
 
 # config nginx
 RUN rm /etc/nginx/sites-enabled/default
