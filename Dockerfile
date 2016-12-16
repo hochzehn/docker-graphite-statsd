@@ -46,21 +46,14 @@ RUN apt-get -y update \
        python-pip \
  && apt-get autoremove -y \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/* \
+ && cd ${GRAPHITE_WEB_PATH} && python ./setup.py install \
+ && cd ${WHISPER_PATH} && python ./setup.py install \
+ && cd ${CARBON_PATH} && python ./setup.py install
 
-# install graphite
-WORKDIR ${GRAPHITE_WEB_PATH}
-RUN python ./setup.py install
+# configure graphite
 ADD conf/opt/graphite/conf/*.conf /opt/graphite/conf/
 ADD conf/opt/graphite/webapp/graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
-
-# install whisper
-WORKDIR ${WHISPER_PATH}
-RUN python ./setup.py install
-
-# install carbon
-WORKDIR ${CARBON_PATH}
-RUN python ./setup.py install
 
 # configure statsd
 ADD conf/opt/statsd/config.js ${STATSD_PATH}/config.js
