@@ -1,28 +1,27 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Nathan Hopkins <natehop@gmail.com>
 
-#RUN echo deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs) main universe > /etc/apt/sources.list.d/universe.list
-RUN apt-get -y update\
- && apt-get -y upgrade
-
-# dependencies
-RUN apt-get -y --force-yes --no-install-recommends install \
- vim\
- nginx\
- python-dev\
- python-flup\
- python-pip\
- python-ldap\
- expect\
- gcc\
- git\
- memcached\
- sqlite3\
- libcairo2\
- libcairo2-dev\
- python-cairo\
- pkg-config\
- nodejs
+RUN apt-get -y update \
+ && apt-get -y upgrade \
+ && apt-get -y --force-yes --no-install-recommends install \
+      vim \
+      nginx \
+      python-dev \
+      python-flup \
+      python-pip \
+      python-ldap \
+      expect \
+      gcc \
+      git \
+      memcached \
+      sqlite3 \
+      libcairo2 \
+      libcairo2-dev \
+      python-cairo \
+      pkg-config \
+      nodejs \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # python dependencies
 RUN pip install django==1.5.12\
@@ -77,8 +76,7 @@ ADD conf /etc/graphite-statsd/conf
 ADD conf/etc/my_init.d/01_conf_init.sh /etc/my_init.d/01_conf_init.sh
 
 # cleanup
-RUN apt-get clean\
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN rm -rf /tmp/* /var/tmp/*
 
 # defaults
 EXPOSE 80 2003-2004 2023-2024 8125/udp 8126
