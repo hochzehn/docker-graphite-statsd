@@ -34,9 +34,13 @@ RUN apt-get -y update \
       twisted==11.1.0 \
       txAMQP==0.6.2 \
  && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/graphite-web.git ${GRAPHITE_WEB_PATH} \
+ && rm -rf ${GRAPHITE_WEB_PATH}/.git \
  && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/whisper.git ${WHISPER_PATH} \
+ && rm -rf ${WHISPER_PATH}/.git \
  && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/carbon.git ${CARBON_PATH} \
- && git clone --depth 1 -b v0.7.2 https://github.com/etsy/statsd.git ${STATSD_PATH}
+ && rm -rf ${CARBON_PATH}/.git \
+ && git clone --depth 1 -b v0.7.2 https://github.com/etsy/statsd.git ${STATSD_PATH} \
+ && rm -rf ${STATSD_PATH}/.git
 
 # install graphite
 WORKDIR ${GRAPHITE_WEB_PATH}
