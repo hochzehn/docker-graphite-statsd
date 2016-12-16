@@ -25,8 +25,6 @@ RUN apt-get -y update \
       python-cairo \
       pkg-config \
       nodejs \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
  && pip install \
       django==1.5.12 \
       python-memcached==1.53 \
@@ -40,7 +38,15 @@ RUN apt-get -y update \
  && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/carbon.git ${CARBON_PATH} \
  && rm -rf ${CARBON_PATH}/.git \
  && git clone --depth 1 -b v0.7.2 https://github.com/etsy/statsd.git ${STATSD_PATH} \
- && rm -rf ${STATSD_PATH}/.git
+ && rm -rf ${STATSD_PATH}/.git \
+ && apt-get remove -y \
+       gcc \
+       git \
+       python-dev \
+       python-pip \
+ && apt-get autoremove -y \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # install graphite
 WORKDIR ${GRAPHITE_WEB_PATH}
