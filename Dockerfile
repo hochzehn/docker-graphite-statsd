@@ -6,13 +6,15 @@ RUN apt-get -y update\
  && apt-get -y upgrade
 
 # dependencies
-RUN apt-get -y --force-yes install vim\
+RUN apt-get -y --force-yes --no-install-recommends install \
+ vim\
  nginx\
  python-dev\
  python-flup\
  python-pip\
  python-ldap\
  expect\
+ gcc\
  git\
  memcached\
  sqlite3\
