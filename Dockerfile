@@ -1,6 +1,11 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Nathan Hopkins <natehop@gmail.com>
 
+ENV GRAPHITE_WEB_PATH=/usr/local/src/graphite-web
+ENV WHISPER_PATH=/usr/local/src/whisper
+ENV CARBON_PATH=/usr/local/src/carbon
+ENV STATSD_PATH=/opt/statsd
+
 RUN apt-get -y update \
  && apt-get -y upgrade \
  && apt-get -y --force-yes --no-install-recommends install \
@@ -21,25 +26,17 @@ RUN apt-get -y update \
       pkg-config \
       nodejs \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-# python dependencies
-RUN pip install django==1.5.12\
- python-memcached==1.53\
- django-tagging==0.3.1\
- twisted==11.1.0\
- txAMQP==0.6.2
-
-ENV GRAPHITE_WEB_PATH=/usr/local/src/graphite-web
-ENV WHISPER_PATH=/usr/local/src/whisper
-ENV CARBON_PATH=/usr/local/src/carbon
-ENV STATSD_PATH=/opt/statsd
-
-# clone git repositories
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/graphite-web.git ${GRAPHITE_WEB_PATH} \
- && git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/whisper.git ${WHISPER_PATH} \
- && git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/carbon.git ${CARBON_PATH} \
- && git clone -b v0.7.2 --depth 1 https://github.com/etsy/statsd.git ${STATSD_PATH}
+ && rm -rf /var/lib/apt/lists/* \
+ && pip install \
+      django==1.5.12 \
+      python-memcached==1.53 \
+      django-tagging==0.3.1 \
+      twisted==11.1.0 \
+      txAMQP==0.6.2 \
+ && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/graphite-web.git ${GRAPHITE_WEB_PATH} \
+ && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/whisper.git ${WHISPER_PATH} \
+ && git clone --depth 1 -b 0.9.15 https://github.com/graphite-project/carbon.git ${CARBON_PATH} \
+ && git clone --depth 1 -b v0.7.2 https://github.com/etsy/statsd.git ${STATSD_PATH}
 
 # install graphite
 WORKDIR ${GRAPHITE_WEB_PATH}
